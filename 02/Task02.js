@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, useParams} from 'react-router-dom'
+import {Route, useParams, Redirect} from 'react-router-dom'
 import products from './../src/products.json'
 
 const Product = ({name, price, category, description}) => {
@@ -16,6 +16,10 @@ const Product = ({name, price, category, description}) => {
 const ProductPage = () => {
     const {id} = useParams()
     const [product = null] = products.filter(p => p.id === Number(id))
+
+    if (product === null) {
+        return <Redirect to="/404" />
+    }
     
     return (
         <Product {...product} />
@@ -24,11 +28,6 @@ const ProductPage = () => {
 
 
 const Task02 = () => {
-    // const {id} = useParams()
-
-    // const [product = null] = products.filter(p => p.id === id)
-
-
     return (
         <>
             <h1>Task02</h1>
