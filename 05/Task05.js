@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route, useParams, useHistory } from "react-router-dom"
 import Shop from "../src/components/Shop"
 import products from "./../src/products.json"
 
 const SearchPage = () => {
 
-    const {minPrice, maxPrice, searchTerm} = useParams()
-    const minPriceNumber = Number(minPrice)
-    const productsAfterMinPrice = products.filter(p => p.price >= Number(minPrice))
+    const {minPrice, maxPrice, searchTerm = ''} = useParams()
 
-    return <p>{minPrice}, {maxPrice}, {searchTerm}</p>
+	function filterByMinPrice(price, products) {
+		return Number.isNaN(price) ? products : products.filter(p => p.price >= price)
+	}
+	
+	function filterByMaxPrice(price, products) {
+		return Number.isNaN(price) ? products : products.filter(p => p.price <= price)
+		
+	}
+
+	function filterBySearchTerm(searchTerm, products) {
+		const searchTermToLowerCase = searchTerm.toLowerCase()
+		return searchTerm.length === '' ? products : products.filter(p => p.name.toLowerCase().includes(searchTermToLowerCase) || p.description.includes(searchTermToLowerCase) )
+	}
+
+    const minPriceNumber = Number(minPrice)
+    const maxPriceNumber = Number(maxPrice)
+
+    const productsAfterMinPrice = filterByMinPrice(minPriceNumber, products)
+ 	const productsAfterMaxPrice = filterByMaxPrice(maxPriceNumber, productsAfterMinPrice)
+	const productsAfterSearchTerm = filterBySearchTerm(searchTerm, productsAfterMaxPrice)
+	
+
+    return <Shop list={productsAfterSearchTerm}/>
 
 }
 
